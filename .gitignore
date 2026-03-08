@@ -1,0 +1,54 @@
+# Ignore Maven build output
+/target/
+
+# IntelliJ IDEA
+/.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# Eclipse
+.settings/
+.classpath
+.project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime files
+*.log
+*.tmp
+*.pid
+*.seed
+
+# Compiled class files and archives
+*.class
+*.jar
+*.war
+*.ear
+
+# Generated sources
+/generated-sources/
+
+# Node
+node_modules/
+
+# Environment files
+.env
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+*.swp
+*.swo
+.terraform/
+
+# Keep local application.yml out of git if present in working dir
+# (project already has application.yml in src/resources; only uncomment if you add a local override file)
+#/application.yml.local
+
