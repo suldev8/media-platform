@@ -1,11 +1,11 @@
 server:
-  port: ${PORT:8080}
+  port: 8080
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/media_platform}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    url: jdbc:postgresql://localhost:5432/media_platform
+    username: postgres
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: validate
@@ -14,8 +14,12 @@ spring:
         format_sql: true
   data:
     redis:
-      host: ${SPRING_DATA_REDIS_HOST:localhost}
-      port: ${SPRING_DATA_REDIS_PORT:6379}
+      host: localhost
+      port: 6379
+
+app:
+  opensearch:
+    url: http://localhost:9200
 
 management:
   endpoints:
@@ -26,9 +30,6 @@ management:
     health:
       show-details: when-authorized
 
-app:
-  opensearch:
-    url: ${APP_OPENSEARCH_URL:http://localhost:9200}
 
 springdoc:
   swagger-ui:

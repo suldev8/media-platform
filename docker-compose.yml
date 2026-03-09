@@ -46,17 +46,12 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Spring datasource - point to the postgres service in this compose network
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/media_platform
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      # Redis
       SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: "6379"
-      # OpenSearch (matches application.yml property name app.opensearch.url)
+      SPRING_DATA_REDIS_PORT: 6379
       APP_OPENSEARCH_URL: http://opensearch:9200
-      # Optional: bind server port from env
-      PORT: "8080"
     depends_on:
       postgres:
         condition: service_healthy
