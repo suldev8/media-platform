@@ -1,0 +1,30 @@
+# Ignore target build output
+target/
+
+# Local IDE files
+.idea/
+.vscode/
+
+# Git
+.git
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+
+# Maven wrapper cache
+.mvn/wrapper/maven-wrapper.jar
+
+# Don't include Dockerfile or docker-compose in the build context unnecessarily
+Dockerfile
+docker-compose.yml
+

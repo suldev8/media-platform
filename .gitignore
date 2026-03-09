@@ -1,13 +1,11 @@
-# Ignore Maven build output
-src/target/*
+# Ignore Maven build output (built artifacts)
+/target/
 
-# IntelliJ IDEA
-.idea/*
+# Ensure IDE and editor folders are ignored
+.idea/
 *.iml
 *.iws
 *.ipr
-
-# VS Code
 .vscode/
 
 # Eclipse
@@ -39,9 +37,11 @@ node_modules/
 
 # Environment files
 .env
+.env.local
 
 # Docker
 docker-compose.override.yml
+.dockerignore
 
 # Misc
 *.swp
@@ -51,4 +51,3 @@ docker-compose.override.yml
 # Keep local application.yml out of git if present in working dir
 # (project already has application.yml in src/resources; only uncomment if you add a local override file)
 #/application.yml.local
-
