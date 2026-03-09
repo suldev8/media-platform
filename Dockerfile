@@ -1,24 +1,46 @@
-# Builder stage: compile the application using Maven
-FROM maven:3.9-eclipse-temurin-17 AS builder
-WORKDIR /workspace
+# Stage 1: Build the application
+FROM maven:3.9.5-eclipse-temurin-17 AS build
 
-# Copy pom first to cache dependencies
-COPY pom.xml .
-RUN mvn -B -DskipTests dependency:go-offline
-
-# Copy source and build
-COPY src ./src
-RUN mvn -B -DskipTests package
-
-# Runtime stage: smaller JRE image
-FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the fat jar from the builder stage
-COPY --from=builder /workspace/target/*.jar app.jar
+# Copy pom.xml and download dependencies (layer caching)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Expose the port configured by the application (default 8080)
+# Copy source code and build the application
+COPY src ./src
+RUN mvn clean package -DskipTests -B
+
+# Stage 2: Create the runtime image
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# Create a non-root user
+RUN addgroup -S spring && adduser -S spring -G spring
+
+# Copy the JAR file from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Change ownership to the non-root user
+RUN chown spring:spring app.jar
+
+# Switch to non-root user
+USER spring:spring
+
+# Expose the application port
 EXPOSE 8080
 
-# Uses bash /dev/tcp (available in Debian-based images). Defaults: DB_HOST=postgres DB_PORT=5432
-ENTRYPOINT ["bash", "-c", "until (echo > /dev/tcp/${DB_HOST:-postgres}/${DB_PORT:-5432}) >/dev/null 2>&1; do echo \"Waiting for database at ${DB_HOST:-postgres}:${DB_PORT:-5432}...\"; sleep 1; done; exec java -jar /app/app.jar"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+# Wait for database to be ready before starting the app
+ENTRYPOINT ["sh", "-c", "\
+  echo 'Waiting for database...'; \
+  while ! nc -z ${DB_HOST:-postgres} ${DB_PORT:-5432}; do \
+    sleep 1; \
+  done; \
+  echo 'Database is ready!'; \
+  java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -jar app.jar"]
+
