@@ -20,5 +20,6 @@ COPY --from=builder /workspace/target/*.jar app.jar
 # Expose the port configured by the application (default 8080)
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-
+# Wait for the database host/port to be accepting connections before starting the app.
+# Uses bash /dev/tcp (available in Debian-based images). Defaults: DB_HOST=postgres DB_PORT=5432
+ENTRYPOINT ["bash", "-c", "until (echo > /dev/tcp/${DB_HOST:-postgres}/${DB_PORT:-5432}) >/dev/null 2>&1; do echo 'Waiting for database at ${DB_HOST:-postgres}:${DB_PORT:-5432}...'; sleep 1; done; exec java -jar /app/app.jar"]
